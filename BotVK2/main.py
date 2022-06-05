@@ -1,6 +1,7 @@
 import vk_api
 import Image
 import sys
+import vk as vk1
 from random import randint, randrange
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
@@ -16,6 +17,16 @@ c = -2
 
 def error():
     write_msg(event.user_id, "Не понял вашего ответа...")
+
+
+def album_mode(album_url):
+    url = album_url
+    album_id = url.split('/')[-1].split('_')[1]
+    owner_id = url.split('/')[-1].split('_')[0].replace('album', '')
+    print(album_id)
+    a = vk.method('photos.getAlbums', {
+        'owner_id': owner_id,
+        'album_id': album_id})
 
 
 def write_msg(user_id, message, keyboard=None):
@@ -88,18 +99,23 @@ for event in longpoll.listen():
                     upload_image = upload.photo_messages(photos=image1)[0]
                     attachments.append(
                         f"photo{upload_image['owner_id']}_{upload_image['id']}")
+
                     upload_image = upload.photo_messages(photos=image2)[0]
                     attachments.append(
                         f"photo{upload_image['owner_id']}_{upload_image['id']}")
+
                     upload_image = upload.photo_messages(photos=image3)[0]
                     attachments.append(
                         f"photo{upload_image['owner_id']}_{upload_image['id']}")
+
                     upload_image = upload.photo_messages(photos=image4)[0]
                     attachments.append(
                         f"photo{upload_image['owner_id']}_{upload_image['id']}")
+
                     upload_image = upload.photo_messages(photos=image5)[0]
                     attachments.append(
                         f"photo{upload_image['owner_id']}_{upload_image['id']}")
+
                     write_msg(event.user_id, f"")
                     c = randint(0, 4)
                     with open("words.txt") as file:
@@ -115,6 +131,8 @@ for event in longpoll.listen():
                     write_msg(event.user_id, f"{e.capitalize()}", keyboard)
                     print(b, c, d, e)
                     b = []
+                elif "vk.com/album" in request.lower():
+                    album_mode(request)
 
                 else:
                     error()
